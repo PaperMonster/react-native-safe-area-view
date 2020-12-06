@@ -15,6 +15,12 @@ const X_WIDTH = 375;
 const X_HEIGHT = 812;
 const XSMAX_WIDTH = 414;
 const XSMAX_HEIGHT = 896;
+const I12_WIDTH = 390;
+const I12_HEIGHT = 844;
+const I12PROMAX_WIDTH = 428;
+const I12PROMAX_HEIGHT = 926;
+const I12MINI_WIDTH = 360;
+const I12MINI_HEIGHT = 780;
 const PAD_WIDTH = 768;
 const PAD_HEIGHT = 1024;
 const IPADPRO11_WIDTH = 834;
@@ -41,7 +47,22 @@ const isIPhoneX = (() => {
       ((D_HEIGHT === X_HEIGHT && D_WIDTH === X_WIDTH) ||
         (D_HEIGHT === X_WIDTH && D_WIDTH === X_HEIGHT))) ||
     ((D_HEIGHT === XSMAX_HEIGHT && D_WIDTH === XSMAX_WIDTH) ||
-      (D_HEIGHT === XSMAX_WIDTH && D_WIDTH === XSMAX_HEIGHT))
+      (D_HEIGHT === XSMAX_WIDTH && D_WIDTH === XSMAX_HEIGHT)) ||
+    ((D_HEIGHT === I12MINI_HEIGHT && D_WIDTH === I12MINI_WIDTH) ||
+      (D_HEIGHT === I12MINI_WIDTH && D_WIDTH === I12MINI_HEIGHT))
+  );
+})();
+
+const isIphone12 = (() => {
+  if (Platform.OS === 'web') return false;
+
+  return (
+    Platform.OS === 'ios' &&
+      
+    ((D_HEIGHT === I12_HEIGHT && D_WIDTH === I12_WIDTH) ||
+      (D_HEIGHT === I12_WIDTH && D_WIDTH === I12_HEIGHT)) ||
+    ((D_HEIGHT === I12PROMAX_HEIGHT && D_WIDTH === I12PROMAX_WIDTH) ||
+      (D_HEIGHT === I12PROMAX_WIDTH && D_WIDTH === I12PROMAX_HEIGHT))
   );
 })();
 
@@ -57,7 +78,7 @@ const isNewIPadPro = (() => {
 })();
 
 const isIPad = (() => {
-  if (Platform.OS !== 'ios' || isIPhoneX) return false;
+  if (Platform.OS !== 'ios' || isIPhoneX || isIphone12) return false;
 
   // if portrait and width is smaller than iPad width
   if (D_HEIGHT > D_WIDTH && D_WIDTH < PAD_WIDTH) {
@@ -95,6 +116,10 @@ const statusBarHeight = isLandscape => {
 
   if (isIPhoneX) {
     return isLandscape ? 0 : 44;
+  }
+  
+  if (isIphone12) {
+    return isLandscape ? 0 : 47;
   }
 
   if (isNewIPadPro) {
@@ -352,14 +377,14 @@ export function getInset(key, isLandscape) {
     case 'horizontal':
     case 'right':
     case 'left': {
-      return isLandscape ? (isIPhoneX ? 44 : 0) : 0;
+      return isLandscape ? (isIPhoneX ? 44 : isIphone12 ? 47 : 0) : 0;
     }
     case 'vertical':
     case 'top': {
       return statusBarHeight(isLandscape);
     }
     case 'bottom': {
-      if (isIPhoneX) {
+      if (isIPhoneX || isIphone12) {
         return isLandscape ? 24 : 34;
       }
 
